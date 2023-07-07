@@ -37,8 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    # 3rd party apps 
     'rest_framework',
     'corsheaders',
+    'rest_framework.authtoken',  # for token auth
+    'dj_rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
+
+
     'accounts.apps.AccountsConfig',  # for the accounts app 
     'posts.apps.PostsConfig'  # for the posts app               
 ]
@@ -52,10 +63,24 @@ CORS_ORIGIN_WHITELIST = (
 # django_project/settings.py
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"] # new
 
-REST_FRAMEWORK = { # new
-"DEFAULT_PERMISSION_CLASSES": [
-"rest_framework.permissions.AllowAny",
-],
+REST_FRAMEWORK = { 
+    # new permission for who can access the api 
+    "DEFAULT_PERMISSION_CLASSES": [
+    "rest_framework.permissions.IsAuthenticated",
+    ],
+
+# we made the implicit default settings explicit 
+    # "DEFAULT_AUTHENTICATION_CLASSES": [ 
+    # "rest_framework.authentication.SessionAuthentication",
+    # "rest_framework.authentication.BasicAuthentication",
+    # ],
+
+# we add the token authentication and session authetication
+    "DEFAULT_AUTHENTICATION_CLASSES": [ 
+    "rest_framework.authentication.SessionAuthentication",
+    "rest_framework.authentication.TokenAuthentication",
+    ],
+
 }
 
 
@@ -82,10 +107,16 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "django.template.context_processors.request",
             ],
         },
     },
 ]
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" # new
+SITE_ID = 1 # new
+
+
 
 WSGI_APPLICATION = 'django_project.wsgi.application'
 
